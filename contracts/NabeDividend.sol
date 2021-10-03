@@ -23,7 +23,7 @@ abstract contract NabeDividend is INabeDividend {
 
     uint256 internal currentBalance = 0;
     uint256 internal totalShares = 0;
-    mapping(address => uint256) internal shares;
+    mapping(address => uint256) public shares;
 
     uint256 constant internal pointsMultiplier = 2**128;
     uint256 internal pointsPerShare = 0;
@@ -72,9 +72,9 @@ abstract contract NabeDividend is INabeDividend {
         return _accumulativeOf(owner) - claimed[owner];
     }
 
-    function claim() override external {
+    function claim() override external returns (uint256 claimable) {
         updateBalance();
-        uint256 claimable = _claimableOf(msg.sender);
+        claimable = _claimableOf(msg.sender);
         if (claimable > 0) {
             claimed[msg.sender] += claimable;
             emit Claim(msg.sender, claimable);
